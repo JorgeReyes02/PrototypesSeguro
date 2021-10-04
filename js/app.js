@@ -33,7 +33,6 @@ Seguro.prototype.cotizarSeguro = function(){
 
     //Cada año que la diferencia es mayor el costo va a reducir un 3% el valor del seguro
     cantidad -= ((diferencia * 3) * cantidad ) / 100;
-    console.log(cantidad);
 
     /*
     Si el seguro es basico se multiplica por un 30% mas
@@ -45,6 +44,7 @@ Seguro.prototype.cotizarSeguro = function(){
     }else{
         cantidad *= 1.50;
     }
+    return cantidad;
 };
 
 function UI(){}
@@ -83,6 +83,49 @@ UI.prototype.mostrarMensaje = (mensaje,tipo) => {
     }, 3000);
 
 };
+
+UI.prototype.mostrarResultado = (total,seguro) => {
+    const {marca,year,tipo} = seguro;
+    let textoMarca;
+    switch(marca){
+        case '1':
+             textoMarca = 'Americano';
+            break;
+        
+         case '3':
+            textoMarca = 'Asíatico';
+            break;
+        
+        case '2':
+            textoMarca = 'Europeo';
+            break;
+        
+        default:
+            break;
+    }
+    //Crear el resultado
+    const div = document.createElement('div');
+    div.classList.add('mt-10');
+    div.innerHTML = `
+        <p class="header">Tu Resumen</p>
+        <p class="font-bold">Marca: <span class="font-normal">${textoMarca}</span></p>
+        <p class="font-bold">Año: <span class="font-normal">${year}</span></p>
+        <p class="font-bold">Tipo: <span class="font-normal capitalize">${tipo}</span></p>
+        <p class="font-bold">Total: <span class="font-normal">$${total}</span></p>
+
+    `;
+    const resultadoDiv = document.querySelector('#resultado');
+    
+
+    //Mostrar spinner
+    const spinner = document.querySelector('#cargando');
+    spinner.style.display = 'block';
+   
+    setTimeout(() => {
+        spinner.style.display = 'none';
+        resultadoDiv.appendChild(div);
+    }, 3000);
+};
 const ui = new UI();
 document.addEventListener('DOMContentLoaded',()=>{
     ui.llenarOpciones();
@@ -113,7 +156,19 @@ function cotizarSeguro(e){
     }
     ui.mostrarMensaje('Cotizando...','correcto');
 
+    //Ocultar las cotizaciones previas
+    const resultados = document.querySelector('#resultado div');
+
+    if(resultados != null){
+        resultados.remove();
+    }
+
     //Instanciar Seguro
     const seguro = new Seguro(marca,year,tipo);
-    seguro.cotizarSeguro();
+    const total = seguro.cotizarSeguro();
+
+    //Utilizar el prototype que se va a cotizar
+    ui.mostrarResultado(total,seguro);
+
+
 }
