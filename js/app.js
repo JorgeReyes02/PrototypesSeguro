@@ -4,6 +4,48 @@ function Seguro(marca,year,tipo){
     this.year = year;
     this.tipo = tipo;
 }
+//Realiza la cotizacion
+Seguro.prototype.cotizarSeguro = function(){
+    /* 
+    Algoritmo del seguro
+    1 = Americano 1.15
+    3 = Asiatico 1.05
+    2 = Europeo 1.35
+    */
+   let cantidad;
+   const base = 2000;
+    switch(this.marca){
+        case '1':
+            cantidad = base * 1.15;
+            break;
+        case '2':
+            cantidad = base * 1.05;
+            break;
+        case '3':
+            cantidad = base * 1.35;
+            break;
+        default:
+            break;
+    }
+
+    //Leer el año 
+    const diferencia = new Date().getFullYear() - this.year;
+
+    //Cada año que la diferencia es mayor el costo va a reducir un 3% el valor del seguro
+    cantidad -= ((diferencia * 3) * cantidad ) / 100;
+    console.log(cantidad);
+
+    /*
+    Si el seguro es basico se multiplica por un 30% mas
+    Si el seguro es completo se multiplica por un 50% mas
+    */
+
+    if(this.tipo === 'basico'){
+        cantidad *= 1.30;
+    }else{
+        cantidad *= 1.50;
+    }
+};
 
 function UI(){}
 
@@ -20,7 +62,8 @@ UI.prototype.llenarOpciones = () =>{
       
 
     }
-}
+};
+//Muestra alertas en Pantalla
 UI.prototype.mostrarMensaje = (mensaje,tipo) => {
     const div = document.createElement('div');
     if(tipo === 'error'){
@@ -39,11 +82,11 @@ UI.prototype.mostrarMensaje = (mensaje,tipo) => {
         div.remove();
     }, 3000);
 
-}
+};
 const ui = new UI();
 document.addEventListener('DOMContentLoaded',()=>{
     ui.llenarOpciones();
-})
+});
 
 eventListeners();
 function eventListeners(){
@@ -69,4 +112,8 @@ function cotizarSeguro(e){
         return;
     }
     ui.mostrarMensaje('Cotizando...','correcto');
+
+    //Instanciar Seguro
+    const seguro = new Seguro(marca,year,tipo);
+    seguro.cotizarSeguro();
 }
